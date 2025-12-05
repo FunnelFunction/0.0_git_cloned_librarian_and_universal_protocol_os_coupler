@@ -107,6 +107,9 @@ function getProviderConfig(providerType: DatabaseProviderType): DatabaseProvider
 
 /**
  * Dynamically load the provider implementation
+ * NOTE: Other providers commented out to avoid build dependencies.
+ * Uncomment and install respective packages (firebase, @supabase/supabase-js, etc.)
+ * when you need to use them.
  */
 async function loadProvider(providerType: DatabaseProviderType): Promise<DatabaseProvider> {
   switch (providerType) {
@@ -117,33 +120,14 @@ async function loadProvider(providerType: DatabaseProviderType): Promise<Databas
       return new LocalStoragePersistenceProvider();
     }
 
-    case 'supabase': {
-      const { SupabasePersistenceProvider } = await import(
-        './1.2.2_folderSupabaseProvider/1.2.2.a_fileSupabasePersistenceProvider'
+    case 'supabase':
+    case 'firebase':
+    case 'postgresql':
+    case 'sqlite':
+      throw new Error(
+        `Provider '${providerType}' requires additional dependencies. ` +
+        `Install the required package and uncomment the provider in 1.2.c_fileActiveDatabaseProviderToggle.ts`
       );
-      return new SupabasePersistenceProvider();
-    }
-
-    case 'firebase': {
-      const { FirebasePersistenceProvider } = await import(
-        './1.2.3_folderFirebaseProvider/1.2.3.a_fileFirebasePersistenceProvider'
-      );
-      return new FirebasePersistenceProvider();
-    }
-
-    case 'postgresql': {
-      const { PostgresqlPersistenceProvider } = await import(
-        './1.2.4_folderPostgresqlProvider/1.2.4.a_filePostgresqlPersistenceProvider'
-      );
-      return new PostgresqlPersistenceProvider();
-    }
-
-    case 'sqlite': {
-      const { SqlitePersistenceProvider } = await import(
-        './1.2.5_folderSqliteProvider/1.2.5.a_fileSqlitePersistenceProvider'
-      );
-      return new SqlitePersistenceProvider();
-    }
 
     default:
       throw new Error(`Unknown provider type: ${providerType}`);
